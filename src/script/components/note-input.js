@@ -1,3 +1,7 @@
+import { addNote } from '../data/remote/notes-api.js';
+import Swal from 'sweetalert2';
+import '../components/note-list.js';
+
 class NoteInput extends HTMLElement {
   constructor() {
     super();
@@ -11,7 +15,7 @@ class NoteInput extends HTMLElement {
   _updateStyle() {
     this._style.textContent = `
       h3 {
-        color: var(--bittersweet);
+        color: #207DFF;
         margin-bottom: 10px;
       }
       .note-wrapper {
@@ -72,8 +76,6 @@ class NoteInput extends HTMLElement {
     this._updateStyle();
 
     this._shadowRoot.innerHTML = '';
-
-    
     this._shadowRoot.appendChild(this._style);
 
     const template = document.createElement('div');
@@ -99,41 +101,47 @@ class NoteInput extends HTMLElement {
     this._shadowRoot.appendChild(template);
   }
 
-  
   _addEventListeners() {
-    const addButton = this.shadowRoot.querySelector("#add-note-btn");
+    const addButton = this.shadowRoot.querySelector('#add-note-btn');
     if (addButton) {
-      addButton.addEventListener("click", () => this.saveNote());
+      addButton.addEventListener('click', () => this.saveNote()
+    );
     }
   }
 
-  saveNote() {
-    const title = this.shadowRoot.querySelector("#note-title").value.trim();
-    const body = this.shadowRoot.querySelector("#note-content").value.trim();
-    
+  async saveNote() {
+    const title = this.shadowRoot.querySelector('#note-title').value.trim();
+    const body = this.shadowRoot.querySelector('#note-content').value.trim();
+
     if (!title || !body) return;
 
-    const note = {
-      id: Date.now().toString(),
-      title,
-      body,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const newNote = await addNote({ title, body });
 
-    let notes = JSON.parse(localStorage.getItem("notes")) || [];
-    notes.push(note);
-    localStorage.setItem("notes", JSON.stringify(notes));
+      this.dispatchEvent(
+        new CustomEvent('note-added', {
+          detail: newNote,
+          bubbles: true,
+          composed: true,
+        })
+      );
 
-    // Dispatch event agar catatan langsung muncul di daftar tanpa refresh
-    this.dispatchEvent(new CustomEvent("note-added", {
-      detail: note,
-      bubbles: true,
-      composed: true,
-    }));
-
-    // Kosongkan input setelah menyimpan
-    this.shadowRoot.querySelector("#note-title").value = "";
-    this.shadowRoot.querySelector("#note-content").value = "";
+      Swal.fire({
+        icon: 'success',
+        title: 'Catatan ditambahkan!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      
+      this.shadowRoot.querySelector('#note-title').value = '';
+      this.shadowRoot.querySelector('#note-content').value = '';
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Gagal menyimpan catatan. Coba lagi nanti!',
+      });
+    }
   }
 }
 

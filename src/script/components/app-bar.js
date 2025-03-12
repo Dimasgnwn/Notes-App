@@ -3,14 +3,14 @@ class AppBar extends HTMLElement {
   _style = null;
 
   constructor() {
-      super();
+    super();
 
-      this._shadowRoot = this.attachShadow({ mode: 'open' });
-      this._style = document.createElement('style');
+    this._shadowRoot = this.attachShadow({ mode: 'open' });
+    this._style = document.createElement('style');
   }
 
   _updateStyle() {
-      this._style.textContent = `
+    this._style.textContent = `
       :host {
       width : 100%;
 
@@ -32,25 +32,24 @@ class AppBar extends HTMLElement {
   }
 
   _emptyContent() {
-      this._shadowRoot.innerHTML = '';
+    this._shadowRoot.innerHTML = '';
   }
 
   connectedCallback() {
-      this.render();
+    this.render();
   }
 
   render() {
-      this._emptyContent();
-      this._updateStyle();
+    this._emptyContent();
+    this._updateStyle();
 
-      this._shadowRoot.appendChild(this._style);
-      this._shadowRoot.innerHTML += `      
+    this._shadowRoot.appendChild(this._style);
+    this._shadowRoot.innerHTML += `      
     <div>
       <h1 class="brand-name">NOTES APP</h1>
     </div>
   `;
-}
+  }
 }
 
 customElements.define('app-bar', AppBar);
-
