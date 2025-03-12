@@ -18,7 +18,7 @@
     "url": "https://github.com/Dimasgnwn/Notes-App/issues"
   },
   "homepage": "https://github.com/Dimasgnwn/Notes-App#readme",
-  "description": "",
+  "description": "1. npm init --yes\r 2. npm install webpack webpack-cli webpack-dev-server webpack-merge css-loader style-loader html-webpack-plugin --save-dev\r 3. npm run start-dev",
   "devDependencies": {
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.26.9",
